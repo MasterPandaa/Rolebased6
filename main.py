@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import pygame
 
-
 # Game constants
 WIDTH = 800
 HEIGHT = 600
@@ -69,7 +68,12 @@ class Ball:
         speed = self.base_speed
         self.vx = math.cos(angle) * speed * direction
         self.vy = math.sin(angle) * speed
-        self.rect = pygame.Rect(int(self.x - self.size // 2), int(self.y - self.size // 2), self.size, self.size)
+        self.rect = pygame.Rect(
+            int(self.x - self.size // 2),
+            int(self.y - self.size // 2),
+            self.size,
+            self.size,
+        )
 
     def speed(self) -> float:
         return math.hypot(self.vx, self.vy)
@@ -171,7 +175,9 @@ class AIOpponent:
             moving_towards_ai = ball.vx > 0
             if moving_towards_ai:
                 # Error increases with ball speed
-                error = AI_ERROR_BASE + AI_ERROR_SPEED_SCALE * (ball.speed() - BALL_SPEED)
+                error = AI_ERROR_BASE + AI_ERROR_SPEED_SCALE * (
+                    ball.speed() - BALL_SPEED
+                )
                 error = max(AI_ERROR_BASE, error)
                 jitter = random.uniform(-error, error)
                 self.target_y = ball.y + jitter
@@ -186,7 +192,9 @@ class AIOpponent:
             self.paddle.move(math.copysign(step, dy))
         else:
             # Small correction towards center when close and ball moves away
-            self.paddle.move((HEIGHT * 0.5 - self.paddle.center_y()) * AI_RETURN_TO_CENTER_FACTOR)
+            self.paddle.move(
+                (HEIGHT * 0.5 - self.paddle.center_y()) * AI_RETURN_TO_CENTER_FACTOR
+            )
 
 
 class Game:
@@ -198,8 +206,14 @@ class Game:
         self.font = pygame.font.SysFont("arial", 36)
 
         # Entities
-        self.player = Paddle(PADDLE_MARGIN, HEIGHT // 2 - PADDLE_HEIGHT // 2, speed=PLAYER_SPEED)
-        self.ai_paddle = Paddle(WIDTH - PADDLE_MARGIN - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2, speed=AI_SPEED)
+        self.player = Paddle(
+            PADDLE_MARGIN, HEIGHT // 2 - PADDLE_HEIGHT // 2, speed=PLAYER_SPEED
+        )
+        self.ai_paddle = Paddle(
+            WIDTH - PADDLE_MARGIN - PADDLE_WIDTH,
+            HEIGHT // 2 - PADDLE_HEIGHT // 2,
+            speed=AI_SPEED,
+        )
         self.ball = Ball()
         self.ai = AIOpponent(self.ai_paddle)
 
